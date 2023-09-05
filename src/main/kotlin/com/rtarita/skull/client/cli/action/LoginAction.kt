@@ -1,9 +1,9 @@
 package com.rtarita.skull.client.cli.action
 
-import com.rtarita.skull.client.cli.auth.LoginCredentials
-import com.rtarita.skull.client.cli.auth.TokenHolder
 import com.rtarita.skull.client.cli.runner.ClientContext
 import com.rtarita.skull.client.cli.state.ClientState
+import com.rtarita.skull.common.LoginCredentials
+import com.rtarita.skull.common.TokenHolder
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody

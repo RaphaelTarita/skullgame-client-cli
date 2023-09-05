@@ -4,6 +4,7 @@ import com.github.ajalt.mordant.rendering.TextStyles
 import com.rtarita.skull.client.cli.runner.ClientContext
 import com.rtarita.skull.client.cli.state.ClientState
 import com.rtarita.skull.client.cli.util.authenticated
+import com.rtarita.skull.client.cli.util.promptListElement
 import com.rtarita.skull.common.Bid
 import com.rtarita.skull.common.Card
 import com.rtarita.skull.common.FirstCard
@@ -38,21 +39,10 @@ data object MoveAction : Action {
             return context.clientState.copy(msg = "it's not your turn")
         }
 
-        val possibleMoves = when (state.currentTurnMode) {
-            TurnMode.FIRST_CARD -> listOf(TurnMode.FIRST_CARD)
-            TurnMode.LAY -> listOf(TurnMode.LAY, TurnMode.BID)
-            TurnMode.BID -> listOf(TurnMode.BID)
-            TurnMode.GUESS -> listOf(TurnMode.GUESS)
-        }
+        val possibleMoves = getPossibleMoves(state.currentTurnMode)
 
-        val selectedMove = TurnMode.valueOf(possibleMoves.singleOrNull()?.toString() ?: run {
-            context.terminal.prompt(
-                prompt = "select move",
-                choices = possibleMoves.map { it.toString() }
-            ) ?: return context.clientState.copy(msg = "select a move")
-        })
+        val selectedMove = promptMove(context, possibleMoves)
 
-        context.terminal.println(TextStyles.bold("=== $selectedMove ==="))
         val move = when (selectedMove) {
             TurnMode.FIRST_CARD -> promptFirstCard(context, state)
             TurnMode.LAY -> promptLay(context, state)
@@ -62,19 +52,36 @@ data object MoveAction : Action {
 
         context.terminal.println(move)
 
-        val response = context.http.post {
-            url {
-                takeFrom(url)
-                path("move", gameid)
-            }
-            authenticated(context)
-            contentType(ContentType.Application.Json)
-            setBody(move)
-        }
+        val response = makeRequest(context, url, gameid, move)
 
         return context.clientState.copy(
             msg = response.body<MoveOutcome>().toString()
         )
+    }
+
+    private fun getPossibleMoves(currentTurnMode: TurnMode) = when (currentTurnMode) {
+        TurnMode.FIRST_CARD -> listOf(TurnMode.FIRST_CARD)
+        TurnMode.LAY -> listOf(TurnMode.LAY, TurnMode.BID)
+        TurnMode.BID -> listOf(TurnMode.BID)
+        TurnMode.GUESS -> listOf(TurnMode.GUESS)
+    }
+
+    private fun promptMove(context: ClientContext, possibleMoves: List<TurnMode>): TurnMode {
+        val selectedMove = possibleMoves.singleOrNull() ?: context.terminal.promptListElement(possibleMoves, "select move")
+
+        context.terminal.println(TextStyles.bold("=== $selectedMove ==="))
+
+        return selectedMove
+    }
+
+    private suspend fun makeRequest(context: ClientContext, url: String, gameid: String, move: Move) = context.http.post {
+        url {
+            takeFrom(url)
+            path("move", gameid)
+        }
+        authenticated(context)
+        contentType(ContentType.Application.Json)
+        setBody(move)
     }
 
     private fun promptFirstCard(context: ClientContext, state: PlayerGameState): FirstCard = promptCard(

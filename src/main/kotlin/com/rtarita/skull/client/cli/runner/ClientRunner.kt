@@ -16,6 +16,7 @@ import com.rtarita.skull.common.PlayerGameState
 import com.rtarita.skull.common.TurnMode
 
 object ClientRunner {
+    private const val MAX_TABLE_CELL_LENGTH = 30
     private val rowGroupHeaderStyle = TextStyle(TextColors.magenta, bold = true)
 
     suspend fun run() {
@@ -55,7 +56,7 @@ object ClientRunner {
                 borderType = BorderType.SQUARE_DOUBLE_SECTION_SEPARATOR
                 header {
                     context.clientState.login?.also { row("login", if (context.clientState.adminMode) "$it (admin)" else it) }
-                    context.clientState.token?.also { row("token", it.truncate(30)) }
+                    context.clientState.token?.also { row("token", it.truncate(MAX_TABLE_CELL_LENGTH)) }
                     context.clientState.gameid?.also { row("game id", it) }
                 }
 
