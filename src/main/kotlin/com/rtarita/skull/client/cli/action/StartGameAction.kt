@@ -14,8 +14,6 @@ data object StartGameAction : Action {
     override val description = "start a game that you created"
     override val command = "start"
 
-    override val postActions = listOf(RefreshAction)
-
     override suspend fun execute(context: ClientContext): ClientState {
         val url = context.clientState.serverUrl ?: return context.clientState.copy(msg = "provide a server url")
         val gameid = context.clientState.gameid ?: return context.clientState.copy(msg = "provide a game id")
@@ -31,7 +29,8 @@ data object StartGameAction : Action {
         return if (response.status == HttpStatusCode.OK) {
             context.clientState.copy(
                 msg = response.bodyAsText(),
-                availableActions = context.clientState.availableActions - StartGameAction + setOf(RefreshAction, MoveAction)
+                availableActions = context.clientState.availableActions - StartGameAction + setOf(RefreshAction, MoveAction),
+                readyForPrompt = false
             )
         } else {
             context.clientState.copy(

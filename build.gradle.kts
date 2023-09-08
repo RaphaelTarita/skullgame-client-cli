@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val kotlinVersion = "1.9.0"
 val ktorVersion = "2.3.3"
 val mordantVersion = "2.1.0"
+val jnativehookVersion = "2.2.2"
 val logbackVersion = "1.4.9"
 val skullgameCommonVersion = "1.0.0"
 
@@ -31,8 +32,10 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-websockets:$ktorVersion")
 
     implementation("com.github.ajalt.mordant:mordant:$mordantVersion")
+    implementation("com.github.kwhat:jnativehook:$jnativehookVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 

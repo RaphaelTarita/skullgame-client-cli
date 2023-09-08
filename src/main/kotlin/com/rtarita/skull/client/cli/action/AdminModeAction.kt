@@ -18,8 +18,8 @@ data object AdminModeAction : Action {
         ).ask() ?: false
 
         return context.clientState.copy(
-            adminMode = answer,
-            msg = "admin mode turned ${if (answer) "on" else "off"}"
+            msg = "admin mode turned ${if (answer) "on" else "off"}",
+            adminMode = answer
         )
     }
 }

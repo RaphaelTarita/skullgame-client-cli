@@ -27,9 +27,6 @@ data object MoveAction : Action {
     override val description = "make a move in an active game"
     override val command = "move"
 
-    override val preActions = listOf(RefreshAction)
-    override val postActions = listOf(RefreshAction)
-
     override suspend fun execute(context: ClientContext): ClientState {
         val url = context.clientState.serverUrl ?: return context.clientState.copy(msg = "provide a server url")
         val gameid = context.clientState.gameid ?: return context.clientState.copy(msg = "provide a game id")
@@ -55,7 +52,8 @@ data object MoveAction : Action {
         val response = makeRequest(context, url, gameid, move)
 
         return context.clientState.copy(
-            msg = response.body<MoveOutcome>().toString()
+            msg = response.body<MoveOutcome>().toString(),
+            readyForPrompt = false
         )
     }
 
@@ -137,12 +135,7 @@ data object MoveAction : Action {
     }
 
     private fun <M : Move> promptCard(context: ClientContext, state: PlayerGameState, prompt: String, constructor: (Card) -> M): M {
-        val card = context.terminal.prompt(
-            prompt = prompt,
-            choices = state.ownCardsInHand
-                .distinct()
-                .map { it.toString() }
-        )?.let { Card.valueOf(it) } ?: state.ownCardsInHand.first()
+        val card = context.terminal.promptListElement(state.ownCardsInHand.distinct(), prompt)
 
         return constructor(card)
     }

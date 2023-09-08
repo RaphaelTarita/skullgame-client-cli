@@ -14,6 +14,7 @@ data object NewGameAction : Action {
     override val name = "New Game"
     override val description = "initiate a new game"
     override val command = "new"
+    override val postAction = SubscribeAction
 
     override suspend fun execute(context: ClientContext): ClientState {
         val url = context.clientState.serverUrl ?: return context.clientState.copy(msg = "provide a server url")
@@ -31,10 +32,10 @@ data object NewGameAction : Action {
 
             context.clientState.copy(
                 msg = "created a new game with id '$gameid'",
+                availableActions = context.clientState.availableActions + setOf(StartGameAction, SubscribeAction),
                 gameid = gameid,
                 lastPlayerGameState = null,
-                lastGameState = null,
-                availableActions = context.clientState.availableActions + StartGameAction
+                lastGameState = null
             )
         } else {
             context.clientState.copy(

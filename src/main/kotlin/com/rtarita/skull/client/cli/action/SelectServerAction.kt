@@ -13,13 +13,13 @@ data object SelectServerAction : Action {
 
         return context.clientState.copy(
             msg = "successfully switched to server '$url'",
+            availableActions = context.staticActions + LoginAction,
             login = null,
             token = null,
             gameid = null,
             lastPlayerGameState = null,
             lastGameState = null,
-            serverUrl = url,
-            availableActions = setOf(LoginAction, AdminModeAction, HelpAction, ShutdownAction)
+            serverUrl = url
         )
     }
 }

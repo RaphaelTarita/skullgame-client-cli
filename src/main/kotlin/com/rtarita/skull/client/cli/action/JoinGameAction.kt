@@ -13,6 +13,7 @@ data object JoinGameAction : Action {
     override val name = "Join Game"
     override val description = "join an existing game"
     override val command = "join"
+    override val postAction = SubscribeAction
 
     override suspend fun execute(context: ClientContext): ClientState {
         val url = context.clientState.serverUrl ?: return context.clientState.copy(msg = "provide a server url")
@@ -29,8 +30,8 @@ data object JoinGameAction : Action {
         return if (response.status == HttpStatusCode.OK) {
             context.clientState.copy(
                 msg = response.bodyAsText(),
-                gameid = gameid,
-                availableActions = context.clientState.availableActions + setOf(RefreshAction, MoveAction)
+                availableActions = context.clientState.availableActions + setOf(RefreshAction, MoveAction, SubscribeAction),
+                gameid = gameid
             )
         } else {
             context.clientState.copy(

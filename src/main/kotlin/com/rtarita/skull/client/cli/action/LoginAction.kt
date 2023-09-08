@@ -18,6 +18,7 @@ data object LoginAction : Action {
     override val name = "Login"
     override val description = "logs an user in, using username and password"
     override val command = "login"
+    override val postAction = ConnectWebSocketAction
 
     @OptIn(ExperimentalStdlibApi::class)
     override suspend fun execute(context: ClientContext): ClientState {
@@ -42,9 +43,9 @@ data object LoginAction : Action {
             val body = result.body<TokenHolder>()
             context.clientState.copy(
                 msg = "successfully logged in as '$userid'",
+                availableActions = context.staticActions + setOf(NewGameAction, JoinGameAction, RejoinGameAction),
                 login = userid,
-                token = body.token,
-                availableActions = context.staticActions + setOf(NewGameAction, JoinGameAction, RejoinGameAction)
+                token = body.token
             )
         } else {
             context.clientState.copy(msg = result.bodyAsText())

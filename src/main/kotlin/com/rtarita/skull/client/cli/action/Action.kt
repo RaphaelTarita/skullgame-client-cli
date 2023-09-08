@@ -4,14 +4,15 @@ import com.rtarita.skull.client.cli.runner.ClientContext
 import com.rtarita.skull.client.cli.state.ClientState
 
 sealed interface Action {
+    companion object {
+        const val NO_MANUAL_INVOCATIONS = "__AUTOMATIC__"
+    }
+
     val name: String
     val description: String
     val command: String
-
-    val preActions: List<Action>
-        get() = emptyList()
-    val postActions: List<Action>
-        get() = emptyList()
+    val postAction: Action?
+        get() = null
 
     suspend fun execute(context: ClientContext): ClientState
 }

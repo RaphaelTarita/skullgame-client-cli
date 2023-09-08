@@ -11,6 +11,8 @@ data class ClientState(
     val login: String? = null,
     val token: String? = null,
     val gameid: String? = null,
+    val readyForPrompt: Boolean = false,
+    val subscribed: Boolean = false,
     val adminMode: Boolean = false,
     val lastPlayerGameState: PlayerGameState? = null,
     val lastGameState: GameState? = null

@@ -7,17 +7,33 @@ import com.github.ajalt.mordant.rendering.TextStyle
 import com.github.ajalt.mordant.table.SectionBuilder
 import com.github.ajalt.mordant.table.table
 import com.github.ajalt.mordant.terminal.Terminal
+import com.github.kwhat.jnativehook.GlobalScreen
+import com.rtarita.skull.client.cli.action.Action
+import com.rtarita.skull.client.cli.action.ActivatePromptAction
 import com.rtarita.skull.client.cli.action.BootstrapAction
+import com.rtarita.skull.client.cli.action.RefreshAction
+import com.rtarita.skull.client.cli.action.ResetGameAction
 import com.rtarita.skull.client.cli.action.ShutdownAction
+import com.rtarita.skull.client.cli.util.promptListElement
 import com.rtarita.skull.client.cli.util.truncate
+import com.rtarita.skull.client.cli.util.tryWithLock
 import com.rtarita.skull.common.Card
 import com.rtarita.skull.common.GameState
 import com.rtarita.skull.common.PlayerGameState
+import com.rtarita.skull.common.StateSignal
 import com.rtarita.skull.common.TurnMode
+import com.rtarita.skull.common.condition.dsl.Wait
+import com.rtarita.skull.common.condition.dsl.isGiven
+import com.rtarita.skull.common.condition.dsl.until
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 object ClientRunner {
     private const val MAX_TABLE_CELL_LENGTH = 30
     private val rowGroupHeaderStyle = TextStyle(TextColors.magenta, bold = true)
+    private val updateMutex = Mutex()
+    private val promptMutex = Mutex()
 
     suspend fun run() {
         val context = ClientContext()
@@ -25,29 +41,65 @@ object ClientRunner {
         context.terminal.println("Welcome to Skull Game!")
 
         executeAndUpdate(context, BootstrapAction)
+        updatePromptStatus(context)
+        initKeyboardListen(context)
+        initServerListen(context)
 
         do {
-            val nextAction = updateScreen(context)
+            updateScreen(context)
+            val nextAction = promptNextAction(context)
             executeAndUpdate(context, nextAction)
 
-            context.terminal.prompt(
-                prompt = "continue (enter)",
-                promptSuffix = "? "
-            )
+            promptMutex.withLock {
+                context.terminal.prompt(
+                    prompt = "continue (enter)",
+                    promptSuffix = "? "
+                )
+            }
+            updatePromptStatus(context)
         } while (nextAction != ShutdownAction)
     }
 
-    private suspend fun executeAndUpdate(context: ClientContext, action: com.rtarita.skull.client.cli.action.Action) {
-        for (pre in action.preActions) {
-            context.clientState = pre.execute(context)
-        }
-        context.clientState = action.execute(context)
-        for (post in action.postActions) {
-            context.clientState = post.execute(context)
+    private fun updatePromptStatus(context: ClientContext) {
+        context.isReadyForPrompt.update(context.clientState.readyForPrompt)
+    }
+
+    private suspend fun executeAndUpdate(context: ClientContext, action: Action) {
+        updateMutex.withLock { context.clientState = action.execute(context) }
+        updateMutex.withLock { context.clientState = action.postAction?.execute(context) ?: return }
+    }
+
+    private fun initKeyboardListen(context: ClientContext) {
+        GlobalScreen.addNativeKeyListener(BackspaceKeyListener {
+            context.coroutineScope.launch {
+                executeAndUpdate(context, ActivatePromptAction)
+                updatePromptStatus(context)
+            }
+        })
+    }
+
+    private fun initServerListen(context: ClientContext) = context.coroutineScope.launch {
+        for (signal in context.serverSignalsChannel) {
+            when (signal) {
+                StateSignal.Server.Ack -> {
+                    context.serverAcknowledgement.signal()
+                    context.serverAcknowledgement.reset()
+                    continue
+                }
+
+                is StateSignal.Server.GameEnded -> executeAndUpdate(context, ResetGameAction)
+                is StateSignal.Server.GameStart,
+                is StateSignal.Server.GameUpdate -> executeAndUpdate(context, RefreshAction)
+            }
+
+            promptMutex.tryWithLock {
+                updateScreen(context)
+            }
+            updatePromptStatus(context)
         }
     }
 
-    private fun updateScreen(context: ClientContext): com.rtarita.skull.client.cli.action.Action {
+    private fun updateScreen(context: ClientContext) {
         context.terminal.clear()
         context.terminal.println(Markdown("# ${context.clientState.msg}"))
 
@@ -77,8 +129,13 @@ object ClientRunner {
         }
 
         context.terminal.println()
-        val answer = context.terminal.prompt("next action", choices = context.clientState.availableActions.map { it.command })
-        return context.clientState.availableActions.find { it.command == answer } ?: ShutdownAction
+    }
+
+    private suspend fun promptNextAction(context: ClientContext): Action {
+        Wait until context.isReadyForPrompt.isGiven
+        return promptMutex.withLock {
+            context.terminal.promptListElement(context.clientState.availableActions.toList(), "next action") { it.command }
+        }
     }
 
     private fun Terminal.clear() {
