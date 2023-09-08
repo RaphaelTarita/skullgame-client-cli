@@ -3,11 +3,11 @@ package com.rtarita.skull.client.cli.action
 import com.rtarita.skull.client.cli.runner.ClientContext
 import com.rtarita.skull.client.cli.state.ClientState
 import com.rtarita.skull.client.cli.util.authenticated
-import com.rtarita.skull.common.StateSignal
 import com.rtarita.skull.common.condition.dsl.Wait
 import com.rtarita.skull.common.condition.dsl.happens
 import com.rtarita.skull.common.condition.dsl.until
 import com.rtarita.skull.common.condition.rendezvousSignalCondition
+import com.rtarita.skull.common.state.StateSignal
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.http.URLProtocol

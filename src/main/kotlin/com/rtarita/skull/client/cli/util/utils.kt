@@ -4,7 +4,7 @@ import com.github.ajalt.mordant.terminal.Terminal
 import com.rtarita.skull.client.cli.action.StartGameAction
 import com.rtarita.skull.client.cli.runner.ClientContext
 import com.rtarita.skull.client.cli.state.ClientState
-import com.rtarita.skull.common.PlayerGameState
+import com.rtarita.skull.common.state.PlayerGameState
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.bearerAuth
 import io.ktor.http.headers

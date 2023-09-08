@@ -8,9 +8,9 @@ import com.rtarita.skull.client.cli.action.ShutdownAction
 import com.rtarita.skull.client.cli.state.ClientState
 import com.rtarita.skull.client.cli.util.secondsToMillis
 import com.rtarita.skull.common.CommonConstants
-import com.rtarita.skull.common.StateSignal
 import com.rtarita.skull.common.condition.conflatedBooleanCondition
 import com.rtarita.skull.common.condition.rendezvousSignalCondition
+import com.rtarita.skull.common.state.StateSignal
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

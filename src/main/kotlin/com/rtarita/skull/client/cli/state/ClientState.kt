@@ -1,8 +1,8 @@
 package com.rtarita.skull.client.cli.state
 
 import com.rtarita.skull.client.cli.action.Action
-import com.rtarita.skull.common.GameState
-import com.rtarita.skull.common.PlayerGameState
+import com.rtarita.skull.common.state.GameState
+import com.rtarita.skull.common.state.PlayerGameState
 
 data class ClientState(
     val msg: String = "",

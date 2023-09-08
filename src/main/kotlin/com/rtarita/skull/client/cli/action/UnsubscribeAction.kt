@@ -2,10 +2,10 @@ package com.rtarita.skull.client.cli.action
 
 import com.rtarita.skull.client.cli.runner.ClientContext
 import com.rtarita.skull.client.cli.state.ClientState
-import com.rtarita.skull.common.StateSignal
 import com.rtarita.skull.common.condition.dsl.Wait
 import com.rtarita.skull.common.condition.dsl.happens
 import com.rtarita.skull.common.condition.dsl.until
+import com.rtarita.skull.common.state.StateSignal
 
 data object UnsubscribeAction : Action {
     override val name: String = "Unsubscribe"
