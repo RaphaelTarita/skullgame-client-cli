@@ -1,17 +1,17 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlinVersion = "1.9.21"
-val ktorVersion = "2.3.6"
-val mordantVersion = "2.2.0"
+val kotlinVersion = "1.9.22"
+val ktorVersion = "2.3.8"
+val mordantVersion = "2.3.0"
 val jnativehookVersion = "2.2.2"
-val logbackVersion = "1.4.13"
-val skullgameCommonVersion = "1.0.2-SNAPSHOT"
+val logbackVersion = "1.4.14"
+val skullgameCommonVersion = "1.0.2"
 
 plugins {
-    kotlin("jvm") version "1.9.21"
-    kotlin("plugin.serialization") version "1.9.21"
-    id("io.gitlab.arturbosch.detekt") version "1.23.4"
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.serialization") version "1.9.22"
+    id("io.gitlab.arturbosch.detekt") version "1.23.5"
     application
 }
 
