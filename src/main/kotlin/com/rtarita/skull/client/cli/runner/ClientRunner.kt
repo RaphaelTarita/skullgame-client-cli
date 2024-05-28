@@ -226,7 +226,7 @@ object ClientRunner {
         it.joinToString()
     }
 
-    private fun SectionBuilder.revealedCards(revealed: List<Pair<Int, Int>>) = playerStats(
+    private fun SectionBuilder.revealedCards(revealed: List<Pair<Int, Int>>) = playerStats<List<Int>>( // KT-68570
         "revealed cards",
         revealed.groupBy(Pair<Int, Int>::first) { (_, v) -> v }
             .mapValues { (_, v) -> v.sorted() }
