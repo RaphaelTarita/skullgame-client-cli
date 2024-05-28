@@ -6,7 +6,7 @@ val ktorVersion = "2.3.11"
 val mordantVersion = "2.6.0"
 val jnativehookVersion = "2.2.2"
 val logbackVersion = "1.5.6"
-val skullgameCommonVersion = "1.0.3-SNAPSHOT"
+val skullgameCommonVersion = "1.0.4-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "2.0.0"
