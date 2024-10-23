@@ -6,7 +6,6 @@ import com.rtarita.skull.client.cli.action.HelpAction
 import com.rtarita.skull.client.cli.action.SelectServerAction
 import com.rtarita.skull.client.cli.action.ShutdownAction
 import com.rtarita.skull.client.cli.state.ClientState
-import com.rtarita.skull.client.cli.util.secondsToMillis
 import com.rtarita.skull.common.CommonConstants
 import com.rtarita.skull.common.condition.conflatedBooleanCondition
 import com.rtarita.skull.common.condition.rendezvousSignalCondition
@@ -15,6 +14,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.pingInterval
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -30,7 +30,7 @@ class ClientContext {
             json(CommonConstants.json)
         }
         install(WebSockets) {
-            pingInterval = CommonConstants.WEBSOCKET_PING_PERIOD_SECONDS.secondsToMillis()
+            pingInterval = CommonConstants.WEBSOCKET_PING_PERIOD
             maxFrameSize = CommonConstants.WEBSOCKET_MAX_FRAME_SIZE
         }
     }

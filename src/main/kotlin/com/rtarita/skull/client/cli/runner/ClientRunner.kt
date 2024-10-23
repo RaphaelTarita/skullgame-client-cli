@@ -7,6 +7,7 @@ import com.github.ajalt.mordant.rendering.TextStyle
 import com.github.ajalt.mordant.table.SectionBuilder
 import com.github.ajalt.mordant.table.table
 import com.github.ajalt.mordant.terminal.Terminal
+import com.github.ajalt.mordant.terminal.prompt
 import com.github.kwhat.jnativehook.GlobalScreen
 import com.rtarita.skull.client.cli.action.Action
 import com.rtarita.skull.client.cli.action.ActivatePromptAction

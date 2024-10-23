@@ -1,17 +1,17 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlinVersion = "2.0.0"
-val ktorVersion = "2.3.11"
-val mordantVersion = "2.6.0"
+val kotlinVersion = "2.0.21"
+val ktorVersion = "3.0.0"
+val mordantVersion = "3.0.0"
 val jnativehookVersion = "2.2.2"
-val logbackVersion = "1.5.6"
-val skullgameCommonVersion = "1.0.4-SNAPSHOT"
+val logbackVersion = "1.5.11"
+val skullgameCommonVersion = "1.0.5-SNAPSHOT"
 
 plugins {
-    kotlin("jvm") version "2.0.0"
-    kotlin("plugin.serialization") version "2.0.0"
-    id("io.gitlab.arturbosch.detekt") version "1.23.6"
+    kotlin("jvm") version "2.0.21"
+    kotlin("plugin.serialization") version "2.0.21"
+    id("io.gitlab.arturbosch.detekt") version "1.23.7"
     application
 }
 
@@ -35,6 +35,7 @@ dependencies {
     implementation("io.ktor:ktor-client-websockets:$ktorVersion")
 
     implementation("com.github.ajalt.mordant:mordant:$mordantVersion")
+    implementation("com.github.ajalt.mordant:mordant-markdown:$mordantVersion")
     implementation("com.github.kwhat:jnativehook:$jnativehookVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")

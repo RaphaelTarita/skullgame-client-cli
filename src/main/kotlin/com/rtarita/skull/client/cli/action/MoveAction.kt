@@ -1,6 +1,7 @@
 package com.rtarita.skull.client.cli.action
 
 import com.github.ajalt.mordant.rendering.TextStyles
+import com.github.ajalt.mordant.terminal.prompt
 import com.rtarita.skull.client.cli.runner.ClientContext
 import com.rtarita.skull.client.cli.state.ClientState
 import com.rtarita.skull.client.cli.util.authenticated

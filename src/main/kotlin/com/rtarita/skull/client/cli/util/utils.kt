@@ -1,6 +1,7 @@
 package com.rtarita.skull.client.cli.util
 
 import com.github.ajalt.mordant.terminal.Terminal
+import com.github.ajalt.mordant.terminal.prompt
 import com.rtarita.skull.client.cli.action.StartGameAction
 import com.rtarita.skull.client.cli.runner.ClientContext
 import com.rtarita.skull.client.cli.state.ClientState
@@ -12,12 +13,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.time.Duration
-import kotlin.time.DurationUnit
-import kotlin.time.ExperimentalTime
-
-@OptIn(ExperimentalTime::class)
-fun Long.secondsToMillis() = Duration.convert(toDouble(), DurationUnit.SECONDS, DurationUnit.MILLISECONDS).toLong()
 
 fun String.truncate(maxLen: Int, replacement: String = "..."): String {
     val actualMaxLen = maxLen - replacement.length
